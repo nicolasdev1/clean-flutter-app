@@ -2,7 +2,8 @@ import 'package:faker/faker.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
-import 'package:clean_flutter_app/domain/usecases/authentication.dart';
+import 'package:clean_flutter_app/domain/entities/entities.dart';
+import 'package:clean_flutter_app/domain/usecases/usecases.dart';
 import 'package:clean_flutter_app/domain/helpers/helpers.dart';
 
 import 'package:clean_flutter_app/data/usecases/usecases.dart';
@@ -25,6 +26,13 @@ void main() {
   });
 
   test('Should call HttpClient with correct values', () async {
+    when(httpClient.request(
+            url: anyNamed('url'),
+            method: anyNamed('method'),
+            body: anyNamed('body')))
+        .thenAnswer((_) async =>
+            {'accessToken': faker.guid.guid(), 'name': faker.person.name()});
+
     await sut.auth(params);
 
     verify(httpClient.request(
@@ -80,5 +88,20 @@ void main() {
     final Future future = sut.auth(params);
 
     expect(future, throwsA(DomainError.invalidCredentials));
+  });
+
+  test('Should return an Account if HttpClient returns 200', () async {
+    final String accessToken = faker.guid.guid();
+
+    when(httpClient.request(
+            url: anyNamed('url'),
+            method: anyNamed('method'),
+            body: anyNamed('body')))
+        .thenAnswer((_) async =>
+            {'accessToken': accessToken, 'name': faker.person.name()});
+
+    final AccountEntity account = await sut.auth(params);
+
+    expect(account.token, accessToken);
   });
 }
