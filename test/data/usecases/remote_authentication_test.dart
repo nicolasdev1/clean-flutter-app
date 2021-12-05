@@ -43,7 +43,7 @@ void main() {
 
     verify(httpClient.request(
         url: url,
-        method: 'post',
+        method: 'POST',
         body: {'email': params.email, 'password': params.secret}));
   });
 

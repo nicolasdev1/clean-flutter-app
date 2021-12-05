@@ -18,7 +18,7 @@ class RemoteAuthentication implements Authentication {
 
     try {
       final Map httpResponse =
-          await httpClient.request(url: url, method: 'post', body: body);
+          await httpClient.request(url: url, method: 'POST', body: body);
 
       return RemoteAccountModel.fromJson(httpResponse).toEntity();
     } on HttpError catch (error) {
