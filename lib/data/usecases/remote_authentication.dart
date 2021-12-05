@@ -1,6 +1,7 @@
 import 'package:meta/meta.dart';
 
 import '../../domain/usecases/usecases.dart';
+import '../../domain/helpers/domain_error.dart';
 
 import '../http/http.dart';
 
@@ -13,7 +14,11 @@ class RemoteAuthentication {
   Future<void> auth(AuthenticationParams params) async {
     final Map body = RemoteAuthenticationParams.fromDomain(params).toJson();
 
-    await httpClient.request(url: url, method: 'post', body: body);
+    try {
+      await httpClient.request(url: url, method: 'post', body: body);
+    } on HttpError {
+      throw DomainError.unexpected;
+    }
   }
 }
 
